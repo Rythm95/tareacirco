@@ -1,5 +1,6 @@
 package principal;
 import java.time.LocalDate;
+import java.util.Scanner;
 
 import entidades.*;
 
@@ -7,12 +8,38 @@ public class main {
 
 	public static void main(String[] args) {
 		
-		LocalDate date = LocalDate.of(2020, 1, 8);
+		Scanner read = new Scanner(System.in);
 		
-		new Espectaculo(1L, "Malabarismos", LocalDate.of(2023, 12, 10),LocalDate.of(2024, 1, 6));
-		new Espectaculo(2L, "Trapecismo", LocalDate.of(2024, 1, 8),LocalDate.of(2024, 2, 8));
-		new Espectaculo(3L, "Monólogos", LocalDate.of(2024, 2, 8),LocalDate.of(2024, 2, 8));
-		// test
+		System.out.println("Bienbenido/a.\nSeleccione la acción que desa hacer:");
+		
+		int menu;
+		
+		
+		// Aún probando el menu y viendo cómo lo podría hacer.
+		do {
+			System.out.println("2 - Iniciar Sesión\n1 - Ver Espectáculos\n0 - Salir");
+			menu = read.nextInt();
+			switch (menu) {
+				case 2:
+					System.out.println("Ini");
+					break;
+					
+				case 1:
+					System.out.println("Estos son los espectáculos programados:");
+					break;
+					
+				case 0:
+					System.out.println("Sali");
+					break;
+					
+				default:
+					System.out.println("Ha introducido un valor incorrecto. Por favor, vuelva a  intentarlo.");
+					
+			}
+			
+		} while (menu!=0);
+		
+		
 	}
 
 }

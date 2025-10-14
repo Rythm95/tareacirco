@@ -4,11 +4,15 @@ import java.io.Serializable;
 import java.time.LocalDate;
 
 public class Espectaculo implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Long id;
 	private String nombre;
 	private LocalDate fechaini;
 	private LocalDate fechacfin;
-	// NO HACE FALTA MODIFICAR ESPECTACULO
+	// NO HACE FALTA MODIFICAR ESPECTACULO (aún)
 
 	public Espectaculo(Long id, String nombre, LocalDate fechaini, LocalDate fechacfin) {
 		super();

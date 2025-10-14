@@ -5,6 +5,24 @@ public class Numero {
 	private int orden;
 	private String nombre;
 	private double duracion;
+	private Long idEspec;
+
+	public Numero(Long id, int orden, String nombre, double duracion, Long idEspec) {
+		super();
+		this.id = id;
+		this.orden = orden;
+		this.nombre = nombre;
+		this.duracion = duracion;
+		this.idEspec = idEspec;
+	}
+
+	public Long getIdEspec() {
+		return idEspec;
+	}
+
+	public void setIdEspec(Long idEspec) {
+		this.idEspec = idEspec;
+	}
 
 	public Long getId() {
 		return id;
