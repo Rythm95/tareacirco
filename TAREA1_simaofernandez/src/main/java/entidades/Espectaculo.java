@@ -56,7 +56,7 @@ public class Espectaculo implements Serializable{
 
 	@Override
 	public String toString() {
-		return id+"";
+		return "Espectáculo "+id+" - "+nombre+" [De "+fechaini+" a "+fechacfin+"]";
 	}
 
 }
