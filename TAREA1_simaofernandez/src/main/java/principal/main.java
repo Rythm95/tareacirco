@@ -12,7 +12,7 @@ public class main {
 
 	public static void main(String[] args) {
 
-		System.out.println("Bienbenido/a.\nSeleccione la acción que desa hacer:");
+		System.out.println("Bienbenido/a.\nSeleccione la acción que desa hacer: Prueba");
 
 		// Aún probando el menu y viendo cómo lo podría hacer.
 		do {
