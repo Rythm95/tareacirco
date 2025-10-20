@@ -1,6 +1,7 @@
 package principal;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 import entidades.*;
@@ -55,10 +56,8 @@ public class main {
 		password = read.next().trim();
 
 		if (name.equals("admin") && password.equals("admin")) {
-			sesion = new Sesion("admin", Perfil.ADMIN);
-//			O puede ser así??
-//			sesion.setNombre("admin");
-//			sesion.setPerfil(Perfil.ADMIN);
+			sesion.setNombre(name);
+			sesion.setPerfil(Perfil.ADMIN);
 			System.out.println("Has iniciado sesión como Administrador.");
 		} else
 			System.out.println("Usuario o contraseña incorrectos. Vuelva a intentarlo.");
@@ -107,7 +106,8 @@ public class main {
 			break;
 
 		case 3:
-			System.out.println("Estos son los espectáculos programados:");
+
+			System.out.println();
 			break;
 
 		case 0:
@@ -121,6 +121,98 @@ public class main {
 		}
 	}
 
+	private static void gestionEspectaculos() {
+		int menu = 0;
+
+		do {
+			System.out.println("¿Cómo desea grestionar los Espectaculos?");
+			System.out.println(
+					"3 - Crear o modificar espectáculo\n2 - Crear o modificar número\n1 - Asignar artistas\n0 - Cancelar");
+			switch (menu) {
+			case 3:
+				cmEspectaculo();
+				break;
+			case 2: // Sin Implementar
+				System.out.println("La función aún no ha sido implementada.");
+				break;
+			case 1: // Sin Implementar
+				System.out.println("La función aún no ha sido implementada.");
+				break;
+			case 0:
+				System.out.println();
+				break;
+			default:
+				System.out.println("Se ha introducido un valor no válido. Vuelva a intentarlo.\n");
+
+			}
+
+		} while (menu != 0);
+
+	}
+
+	private static void cmEspectaculo() {
+		int menu = 0;
+		do {
+			System.out.println("2 - Crear espectáculo\n1 - Modificar espectáculo\n0 - Cancelar");
+			switch (menu) {
+			case 2:
+				System.out.println("Introduzca un ID para el espectáculo.");
+				Long id = read.nextLong(); // No se debe repetir
+				System.out.println("Introduzca un nombre único para el espectáculo.");
+				String name = read.nextLine(); // No debe superar los 25 char.
+				if (name.length() > 25) {
+					System.out.println("El nombre no debe superar los 25 caracteres.");
+					break; // Este break en principio funciona??
+				}
+				LocalDate dateSt;
+				System.out.println("Introduzca la fecha inicial del espectáculo.");
+				try {
+					dateSt = LocalDate.parse(read.next());
+					read.nextLine();
+				} catch (DateTimeParseException e) {
+					System.out.println("La fecha no es válida.");
+					break;
+				}
+				LocalDate dateEn;
+				System.out.println("Introduzca la fecha final del espectáculo.");
+				try {
+					dateEn = LocalDate.parse(read.next());
+					read.nextLine();
+					
+					if (dateEn.isBefore(dateSt)) {
+						System.out.println("La fecha final no puede ser anterior a la fecha inicial.");
+						break;
+					}
+					else if(dateSt.plusYears(1).isAfter(dateEn)){
+						System.out.println("La duración del espectáculo no debe ser superior a un año.");
+						break;
+					}
+											
+				} catch (DateTimeParseException e) {
+					System.out.println("La fecha no es válida.");
+					break;
+				}
+				Espectaculo esp = new Espectaculo(id, name, dateSt, dateEn);
+				// Se añadiría a la lista
+				System.out.println("El espectáculo se ha creado correctamente.");
+				
+				break;
+
+			case 1:
+				System.out.println("La función aún no ha sido implementada.");
+				break;
+
+			case 0:
+				System.out.println("Operación cancelada.");
+				break;
+
+			default:
+				System.out.println("Se ha introducido un valor no válido. Vuelva a intentarlo.\n");
+
+			}
+		} while (menu != 0);
+	}
+
 	private static void gestionPersonas() {
 		int menu = 0;
 		System.out.println("¿Cómo desea gestionar las Personas?");
@@ -128,13 +220,13 @@ public class main {
 		menu = read.nextInt();
 		switch (menu) {
 		case 1:
-			
+
 			break;
-			
+
 		case 2:
-			
+
 			break;
-			
+
 		}
 	}
 
