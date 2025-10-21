@@ -10,7 +10,7 @@ public class Coordinacion extends Persona {
 	
 	public Coordinacion(Long id, String email, String nombre, String nacionalidad, Long idCoord) {
 		super(id, email, nombre, nacionalidad);
-		idCoord = idCoord;
+		this.idCoord = idCoord;
 		this.senior = false;
 		this.fechasenior = null;
 	}
@@ -18,7 +18,7 @@ public class Coordinacion extends Persona {
 	public Coordinacion(Long id, String email, String nombre, String nacionalidad, Long idCoord, boolean senior,
 			LocalDate fechasenior) {
 		super(id, email, nombre, nacionalidad);
-		idCoord = idCoord;
+		this.idCoord = idCoord;
 		this.senior = senior;
 		this.fechasenior = fechasenior;
 	}
@@ -28,7 +28,7 @@ public class Coordinacion extends Persona {
 	}
 
 	public void setIdCoord(Long idCoord) {
-		idCoord = idCoord;
+		this.idCoord = idCoord;
 	}
 
 	public boolean isSenior() {

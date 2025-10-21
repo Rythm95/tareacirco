@@ -1,6 +1,6 @@
 package entidades;
 
-public class Credenciales {
+public class Credenciales implements Comparable<Credenciales>{
 	private Long id;
 	private String nombre;
 	private String password;
@@ -44,6 +44,12 @@ public class Credenciales {
 
 	public void setPerfil(Perfil perfil) {
 		this.perfil = perfil;
+	}
+	
+	@Override
+	public int compareTo(Credenciales o) {
+		
+		return Long.compare(this.id, o.id);
 	}
 
 }

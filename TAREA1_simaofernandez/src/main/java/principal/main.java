@@ -1,8 +1,10 @@
 package principal;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -19,6 +21,7 @@ public class main {
 	static private Scanner read = new Scanner(System.in);
 	static private Sesion sesion = new Sesion("Invitado", Perfil.INVITADO);
 	static private TreeSet<Espectaculo> espectaculos = new TreeSet<>();
+	static private TreeSet<Credenciales> credenciales = new TreeSet<>();
 
 	public static void main(String[] args) {
 
@@ -63,7 +66,7 @@ public class main {
 		if (!espFile.exists())
 			return espectaculos;
 
-		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("ficheros/espectaculos.dat"))) {
+		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(espFile))) {
 			espectaculos = (TreeSet<Espectaculo>) ois.readObject();
 		} catch (IOException | ClassNotFoundException e) {
 			System.out.println("Error al leer los espectáculos");
@@ -144,6 +147,7 @@ public class main {
 		menu = read.nextInt();
 		switch (menu) {
 
+		// Gestionar persona
 		case 4:
 
 			gestionPersonas();
@@ -157,8 +161,8 @@ public class main {
 			break;
 
 		case 0:
-			System.out.println("¡Adiós!");
 			sesion.setPerfil(Perfil.INVITADO);
+			System.out.println("Su sesión ha sido cerrada");
 
 			return;
 
@@ -288,16 +292,95 @@ public class main {
 		System.out.println("¿Cómo desea gestionar las Personas?");
 		System.out.println("2 - Registrar Persona\n1 - Agisnar Credenciales\n0 - Cancelar");
 		menu = read.nextInt();
-		switch (menu) {
-		case 1:
+		do {
+			switch (menu) {
+			// Registrar persona
+			case 2:
+				System.out.println("Introduce los datos de la persona que quieres registrar:");
+				System.out.print("Nombre real: ");
+				String name = read.nextLine();
+				System.out.print("\nEmail: ");
+				String email = read.next();
+				System.out.print("\nNacionalidad: "); // Usar paises.xml
+				String nacionalidad = read.nextLine();
+				char tipo;
+				do {
+					System.out.print("\n¿Es de coordinación o artista? [Escribe C o A respectivamente]: ");
+					tipo = read.next().charAt(0);
+					switch (tipo) {
+					case 'C':
 
-			break;
+						char esSenior;
+						boolean senior;
+						System.out.println("¿Es senior? [Y/N]: ");
+						esSenior = read.next().charAt(0);
+						switch (esSenior) {
+						case 'Y':
+							senior = true;
+							System.out.println("¿Desde qué fecha? (yyyy-mm-dd)");
+							try {
+								LocalDate seniorFecha= LocalDate.parse(read.next());
+								read.nextLine();
+							} catch (DateTimeParseException e) {
+								System.out.println("La fecha no es válida.");
+								tipo = 'X';
+								break;
+							}
+							break;
 
-		case 2:
+						case 'N':
+							senior = false;
+							break;
 
-			break;
+						default:
+							System.out.println("Se ha introducido un valor no válido. Vuelva a intentarlo.\n");
+							tipo = 'X'; //Se repite el switch anterior
+						}
+						break;
 
+					case 'A':
+						
+
+						break;
+
+					default:
+						System.out.println("Se ha introducido un valor no válido. Vuelva a intentarlo.\n");
+					}
+				} while (tipo != 'C' || tipo != 'A');
+				System.out.print("\n");
+				break;
+
+			case 1:
+
+				break;
+
+			case 0:
+
+				break;
+
+			}
+		} while (menu != 0);
+	}
+
+	private static TreeSet<Credenciales> cargarCredenciales() {
+		File creFile = new File("ficheros/credenciales.txt");
+
+		if (!creFile.exists())
+			return credenciales;
+
+		try (BufferedReader br = new BufferedReader(new FileReader(creFile))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				String[] cred = line.split("\\|");
+				if (cred.length >= 4) {
+					Long id = Long.parseLong(cred[0]);
+				}
+			}
+
+		} catch (IOException e) {
+			System.out.println("Error al leer las credenciales.");
 		}
+		return credenciales;
 	}
 
 }
