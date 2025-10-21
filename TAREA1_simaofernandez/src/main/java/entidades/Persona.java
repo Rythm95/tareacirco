@@ -1,25 +1,25 @@
 package entidades;
 
 public abstract class Persona {
-	protected Long id;
+	protected Long idPersona;
 	protected String email;
 	protected String nombre;
 	protected String nacionalidad;
 
 	public Persona(Long id, String email, String nombre, String nacionalidad) {
 		super();
-		this.id = id;
+		this.idPersona = id;
 		this.email = email;
 		this.nombre = nombre;
 		this.nacionalidad = nacionalidad;
 	}
 
 	public Long getId() {
-		return id;
+		return idPersona;
 	}
 
 	public void setId(Long id) {
-		this.id = id;
+		this.idPersona = id;
 	}
 
 	public String getEmail() {

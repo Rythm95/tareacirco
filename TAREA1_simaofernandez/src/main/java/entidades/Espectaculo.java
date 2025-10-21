@@ -3,7 +3,7 @@ package entidades;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-public class Espectaculo implements Serializable{
+public class Espectaculo implements Serializable, Comparable<Espectaculo>{
 	/**
 	 * 
 	 */
@@ -57,6 +57,12 @@ public class Espectaculo implements Serializable{
 	@Override
 	public String toString() {
 		return "Espectáculo "+id+" - "+nombre+" [De "+fechaini+" a "+fechacfin+"]";
+	}
+
+	@Override
+	public int compareTo(Espectaculo o) {
+		
+		return Long.compare(this.id, o.id);
 	}
 
 }
