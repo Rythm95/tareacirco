@@ -1,20 +1,14 @@
 package entidades;
 
+import java.util.List;
+
 public class Artista extends Persona {
 	private Long idArt;
 	private String apodo=null;
-	private Especialidad[] especialidades;
-
-	public Artista(Long id, String email, String nombre, String nacionalidad, Long idArt,
-			Especialidad[] especialidades) {
-		super(id, email, nombre, nacionalidad);
-		this.idArt = idArt;
-		this.apodo = null;
-		this.especialidades = especialidades;
-	}
+	private List<Especialidad> especialidades;
 	
 	public Artista(Long id, String email, String nombre, String nacionalidad, Long idArt, String apodo,
-			Especialidad[] especialidades) {
+			List<Especialidad> especialidades) {
 		super(id, email, nombre, nacionalidad);
 		this.idArt = idArt;
 		this.apodo = apodo;
@@ -37,11 +31,11 @@ public class Artista extends Persona {
 		this.apodo = apodo;
 	}
 
-	public Especialidad[] getEspecialidades() {
+	public List<Especialidad> getEspecialidades() {
 		return especialidades;
 	}
 
-	public void setEspecialidades(Especialidad[] especialidades) {
+	public void setEspecialidades(List<Especialidad> especialidades) {
 		this.especialidades = especialidades;
 	}
 

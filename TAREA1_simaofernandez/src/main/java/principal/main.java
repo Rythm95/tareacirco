@@ -1,20 +1,39 @@
 package principal;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 
 import entidades.*;
+
+
+/*
+ * Cosas que faltan:
+ * usar paises.xml
+ * configurar los menus de coordinacion y artistas
+ * inicio de sesión para coordinacion y artistas
+ * asignar coordinadores a espectaculos
+ * guardar la sesión
+ * poner mi nombre por algún sitio
+ * Se asigna una persona de tipo Coordinador como responsable del
+ *   nuevo Espectáculo. Si se tiene sesión como Administrador, se le
+ *   mostrarán las personas
+ * NO añadir vista completa de espectaculos
+ */
 
 public class main {
 
@@ -290,40 +309,56 @@ public class main {
 	private static void gestionPersonas() {
 		int menu = 0;
 		System.out.println("¿Cómo desea gestionar las Personas?");
-		System.out.println("2 - Registrar Persona\n1 - Agisnar Credenciales\n0 - Cancelar");
-		menu = read.nextInt();
 		do {
+			System.out.println("1 - Registrar Persona\n0 - Cancelar");
+			menu = read.nextInt();
+
 			switch (menu) {
 			// Registrar persona
-			case 2:
+			case 1:
+				read.nextLine();
 				System.out.println("Introduce los datos de la persona que quieres registrar:");
 				System.out.print("Nombre real: ");
-				String name = read.nextLine();
-				System.out.print("\nEmail: ");
-				String email = read.next();
-				System.out.print("\nNacionalidad: "); // Usar paises.xml
+				String name = read.nextLine().trim();
+				System.out.print("Email: ");
+				String email = read.next().trim();
+				// Validar email
+				if (!Pattern.matches("^[\\w._%+-]+@[\\w.-]+\\.[a-zA-Z]{2,}$", email)) {
+					System.out.println("El email no es válido.");
+					menu = 0;
+					break;
+				}
+				read.nextLine();
+				System.out.print("Nacionalidad: "); // Usar paises.xml
 				String nacionalidad = read.nextLine();
-				char tipo;
+				String perfCA;
 				do {
-					System.out.print("\n¿Es de coordinación o artista? [Escribe C o A respectivamente]: ");
-					tipo = read.next().charAt(0);
-					switch (tipo) {
-					case 'C':
+					System.out.print("Perfil (COORDINACION o ARTISTA): ");
+					perfCA = read.next();
+					if (!perfCA.equalsIgnoreCase("COORDINACION") && !perfCA.equalsIgnoreCase("ARTISTA")) {
+						System.out.println("Valor de Perfil incorrecto. Vuelva a intentarlo.");
+					}
+				} while (!perfCA.equalsIgnoreCase("COORDINACION") && !perfCA.equalsIgnoreCase("ARTISTA"));
+				Perfil perfil = Perfil.valueOf(perfCA.toUpperCase());
+				Persona persona;
+				if (perfil == Perfil.COORDINACION) {
 
-						char esSenior;
-						boolean senior;
-						System.out.println("¿Es senior? [Y/N]: ");
-						esSenior = read.next().charAt(0);
+					char esSenior;
+					boolean senior = false;
+					LocalDate seniorFecha = null;
+					do {
+						System.out.print("¿Es senior? [Y/N]: ");
+						esSenior = read.next().toUpperCase().charAt(0);
 						switch (esSenior) {
 						case 'Y':
 							senior = true;
-							System.out.println("¿Desde qué fecha? (yyyy-mm-dd)");
+							System.out.println("\n¿Desde qué fecha? (yyyy-mm-dd)");
 							try {
-								LocalDate seniorFecha= LocalDate.parse(read.next());
+								seniorFecha = LocalDate.parse(read.next());
 								read.nextLine();
 							} catch (DateTimeParseException e) {
 								System.out.println("La fecha no es válida.");
-								tipo = 'X';
+								esSenior = 'X'; // Se repite el switch
 								break;
 							}
 							break;
@@ -334,32 +369,192 @@ public class main {
 
 						default:
 							System.out.println("Se ha introducido un valor no válido. Vuelva a intentarlo.\n");
-							tipo = 'X'; //Se repite el switch anterior
 						}
-						break;
+					} while (esSenior != 'Y' && esSenior != 'N');
 
-					case 'A':
-						
+					persona = new Coordinacion(personaID(), email, name, nacionalidad, perfilID(perfil), senior, seniorFecha);
+				} else {
+					char tieneApodo;
+					String apodo = null;
+					do {
+						System.out.print("¿Tiene apodo? [Y/N]: ");
+						tieneApodo = read.next().toUpperCase().charAt(0);
+						read.nextLine();
+						switch (tieneApodo) {
+						case 'Y':
 
-						break;
+							System.out.print("Apodo: ");
+							apodo = read.nextLine().trim();
+							break;
 
-					default:
-						System.out.println("Se ha introducido un valor no válido. Vuelva a intentarlo.\n");
+						case 'N':
+							break;
+
+						default:
+							System.out.println("Se ha introducido un valor no válido. Vuelva a intentarlo.\n");
+						}
+					} while (tieneApodo != 'Y' && tieneApodo != 'N');
+
+					List<Especialidad> listaEspecialidades;
+					boolean listError = true;
+					do {
+						System.out.println(
+								"Especialidades (ACROBACIA,HUMOR,MAGIA,EQUILIBRIO,MALABARISMO Separadas por ',')");
+
+						String[] especialidades = read.nextLine().toUpperCase().split(",");
+						listaEspecialidades = new ArrayList<>();
+						listError=false;
+						for (String es : especialidades) {
+							try {
+								listaEspecialidades.add(Especialidad.valueOf(es.trim()));
+							} catch (IllegalArgumentException e) {
+								System.out.println("La especialidad no es válida. Vuelva a intentarlo.");
+								listError = true;
+								break;
+							}
+						}
+					} while (listError);
+
+					persona = new Artista(personaID(), email, name, nacionalidad, perfilID(perfil), apodo,
+							listaEspecialidades);
+				}
+				String user = "";
+				System.out.println();
+				do {
+					System.out.print("Nombre de usuario: ");
+					user = read.nextLine().toLowerCase();
+					if (user == "")
+						System.out.println("\nEl nombre de usuario no debe estar vacío.");
+					if (user.length() < 2) {
+						System.out.println("\nEl nombre de usuario debe contener más de 2 caracteres");
+						user = "";
 					}
-				} while (tipo != 'C' || tipo != 'A');
-				System.out.print("\n");
+					if (user.contains(" ")) {
+						System.out.println("\nEl nombre de usuario no debe contener espacios");
+						user = "";
+					}
+					if (!Pattern.matches("^[a-z]+$", user)) {
+						System.out.println(
+								"\nEl nombre de usuario no debe contener números ni letras con tíldes o dieresis");
+						user = "";
+					}
+				} while (user == "");
+
+				String password = "";
+				System.out.println();
+				do {
+					System.out.print("Contraseña: ");
+					password = read.nextLine();
+					if (password == "")
+						System.out.println("\nLa contraseña no debe estar vacía.");
+					if (password.length() < 2) {
+						System.out.println("\nLa contraseña debe contener más de 2 caracteres");
+						password = "";
+					}
+					if (password.contains(" ")) {
+						System.out.println("\nLa contraseña no debe contener espacios");
+						password = "";
+					}
+				} while (password == "");
+
+				if (existeUsuario(user)) {
+					System.out.println("Ya hay un usuario regirstrado con ese nombre.");
+					return;
+				}
+
+				if (existeEmail(email)) {
+					System.out.println("Ya hay un usuario regirstrado con ese email.");
+					return;
+				}
+
+				Credenciales credenciales = new Credenciales(personaID(), user, password, perfil);
+				saveCredenciales(persona,credenciales);
+
 				break;
-
-			case 1:
-
-				break;
-
 			case 0:
-
+				System.out.println("Operación cancelada.");
 				break;
+
+			default:
+				System.out.println("Se ha introducido un valor no válido. Vuelva a intentarlo.\n");
 
 			}
 		} while (menu != 0);
+	}
+
+	private static void saveCredenciales(Persona p, Credenciales c) {
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter("ficheros/credenciales.txt", true))) {
+			bw.write(p.getidPersona() + "|" + c.getNombre() + "|" + c.getPassword() + "|" + p.getEmail() + "|"
+					+ p.getNombre() + "|" + p.getNacionalidad() + "|" + c.getPerfil());
+			bw.newLine();
+			System.out.println("La persona se ha registrado con éxito.");
+		} catch (IOException e) {
+			System.out.println("Error al guardar credenciales.");
+		}
+	}
+
+	private static Long personaID() {
+		Long idMax = 0L;
+		try (BufferedReader br = new BufferedReader(new FileReader("ficheros/credenciales.txt"))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				String[] creds = line.split("\\|");
+				Long id = Long.parseLong(creds[0]);
+				if (id > idMax)
+					idMax = id;
+			}
+		} catch (IOException e) {
+		}
+		return idMax + 1;
+	}
+
+	// Obtiene el ID correspondiente de Artista o Coordinador
+	private static Long perfilID(Perfil perfil) {
+		Long idMax = 0L;
+		Long id = 0L;
+		try (BufferedReader br = new BufferedReader(new FileReader("ficheros/credenciales.txt"))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				String[] creds = line.split("\\|");
+				if (creds.length > 6 && creds[6].equalsIgnoreCase(perfil.toString()))
+					id++;
+				if (id > idMax)
+					idMax = id;
+			}
+		} catch (IOException e) {
+		}
+		return idMax + 1;
+
+	}
+
+	private static boolean existeUsuario(String user) {
+
+		try (BufferedReader br = new BufferedReader(new FileReader("ficheros/credenciales.txt"))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				String[] creds = line.split("\\|");
+				if (creds.length > 1 && creds[1].equalsIgnoreCase(user))
+					return true;
+			}
+		} catch (IOException e) {
+			// Si da error probablemente no esté repetido.
+		}
+		return false;
+	}
+
+	private static boolean existeEmail(String email) {
+
+		try (BufferedReader br = new BufferedReader(new FileReader("ficheros/credenciales.txt"))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				String[] creds = line.split("\\|");
+				if (creds.length > 3 && creds[3].equalsIgnoreCase(email))
+					return true;
+			}
+		} catch (IOException e) {
+			// Si da error probablemente no esté repetido.
+		}
+		return false;
 	}
 
 	private static TreeSet<Credenciales> cargarCredenciales() {
@@ -371,9 +566,9 @@ public class main {
 		try (BufferedReader br = new BufferedReader(new FileReader(creFile))) {
 			String line;
 			while ((line = br.readLine()) != null) {
-				String[] cred = line.split("\\|");
-				if (cred.length >= 4) {
-					Long id = Long.parseLong(cred[0]);
+				String[] creds = line.split("\\|");
+				if (creds.length >= 4) {
+					Long id = Long.parseLong(creds[0]);
 				}
 			}
 

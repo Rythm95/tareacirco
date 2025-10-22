@@ -6,20 +6,20 @@ public abstract class Persona {
 	protected String nombre;
 	protected String nacionalidad;
 
-	public Persona(Long id, String email, String nombre, String nacionalidad) {
+	public Persona(Long idPersona, String email, String nombre, String nacionalidad) {
 		super();
-		this.idPersona = id;
+		this.idPersona = idPersona;
 		this.email = email;
 		this.nombre = nombre;
 		this.nacionalidad = nacionalidad;
 	}
 
-	public Long getId() {
+	public Long getidPersona() {
 		return idPersona;
 	}
 
-	public void setId(Long id) {
-		this.idPersona = id;
+	public void setidPersona(Long idPersona) {
+		this.idPersona = idPersona;
 	}
 
 	public String getEmail() {

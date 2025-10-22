@@ -17,6 +17,10 @@
 		<nombre>Bélgica</nombre>
 	</pais>
 	<pais>
+		<id>BO</id>
+		<nombre>Bolivia</nombre>
+	</pais>
+	<pais>
 		<id>BR</id>
 		<nombre>Brasil</nombre>
 	</pais>
