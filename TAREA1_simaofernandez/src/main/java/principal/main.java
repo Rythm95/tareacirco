@@ -130,66 +130,7 @@ public class main {
 
 	}
 
-	private static boolean menuInvitado() {
 
-		int menu;
-		System.out.println("2 - Iniciar Sesión\n1 - Ver Espectáculos\n0 - Salir");
-		menu = read.nextInt();
-		switch (menu) {
-		case 2:
-			System.out.println("Ini");
-			inicioSesion();
-			break;
-
-		case 1:
-			System.out.println("Estos son los espectáculos programados:\n");
-			verEspectaculos();
-			break;
-
-		case 0:
-			System.out.println("¡Adiós!");
-			return true;
-
-		default:
-			System.out.println("Ha introducido un valor incorrecto. Por favor, vuelva a  intentarlo.");
-
-		}
-		return false;
-	}
-
-	private static void menuAdmin() {
-
-		int menu;
-		System.out.println("Seleccione la acción que desea realizar.");
-		System.out.println(
-				"4 - Gestionar Personas\n3 - Gestionar Espectáculos\n2 - Ver Espectáculos\n1 - Ver Espectáculo completo\n0 - Cerrar Sesión");
-		menu = read.nextInt();
-		switch (menu) {
-
-		// Gestionar persona
-		case 4:
-
-			gestionPersonas();
-			System.out.println();
-			break;
-
-		case 3:
-			System.out.println();
-			gestionEspectaculos();
-			System.out.println();
-			break;
-
-		case 0:
-			sesion.setPerfil(Perfil.INVITADO);
-			System.out.println("Su sesión ha sido cerrada");
-
-			return;
-
-		default:
-			System.out.println("Ha introducido un valor incorrecto. Por favor, vuelva a  intentarlo.");
-
-		}
-	}
 
 	private static void gestionEspectaculos() {
 		int menu = 0;
@@ -527,6 +468,100 @@ public class main {
 
 	}
 
+	private static TreeSet<Credenciales> cargarCredenciales() {
+		File creFile = new File("ficheros/credenciales.txt");
+
+		if (!creFile.exists())
+			return credenciales;
+
+		try (BufferedReader br = new BufferedReader(new FileReader(creFile))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				String[] creds = line.split("\\|");
+				if (creds.length >= 4) {
+					Long id = Long.parseLong(creds[0]);
+				}
+			}
+
+		} catch (IOException e) {
+			System.out.println("Error al leer las credenciales.");
+		}
+		return credenciales;
+		
+		
+	}
+	
+//\\// Menus
+	private static boolean menuInvitado() {
+
+		int menu;
+		System.out.println("2 - Iniciar Sesión\n1 - Ver Espectáculos\n0 - Salir");
+		menu = read.nextInt();
+		switch (menu) {
+		case 2:
+			System.out.println("Ini");
+			inicioSesion();
+			break;
+
+		case 1:
+			System.out.println("Estos son los espectáculos programados:\n");
+			verEspectaculos();
+			break;
+
+		case 0:
+			System.out.println("¡Adiós!");
+			return true;
+
+		default:
+			System.out.println("Ha introducido un valor incorrecto. Por favor, vuelva a  intentarlo.");
+
+		}
+		return false;
+	}
+
+	private static void menuAdmin() {
+
+		int menu;
+		System.out.println("Seleccione la acción que desea realizar.");
+		System.out.println(
+				"4 - Gestionar Personas\n3 - Gestionar Espectáculos\n2 - Ver Espectáculos\n1 - Ver Espectáculo completo\n0 - Cerrar Sesión");
+		menu = read.nextInt();
+		switch (menu) {
+
+		// Gestionar persona
+		case 4:
+
+			gestionPersonas();
+			System.out.println();
+			break;
+
+		case 3:
+			System.out.println();
+			gestionEspectaculos();
+			System.out.println();
+			break;
+
+		case 0:
+			sesion.setPerfil(Perfil.INVITADO);
+			System.out.println("Su sesión ha sido cerrada");
+
+			return;
+
+		default:
+			System.out.println("Ha introducido un valor incorrecto. Por favor, vuelva a  intentarlo.");
+
+		}
+	}
+	
+	private static void menuCoordinacion() {
+		
+	}
+	
+	private static void menuArtista() {
+		
+	}
+	
+//\\// Validaciones
 	private static boolean existeUsuario(String user) {
 
 		try (BufferedReader br = new BufferedReader(new FileReader("ficheros/credenciales.txt"))) {
@@ -555,27 +590,6 @@ public class main {
 			// Si da error probablemente no esté repetido.
 		}
 		return false;
-	}
-
-	private static TreeSet<Credenciales> cargarCredenciales() {
-		File creFile = new File("ficheros/credenciales.txt");
-
-		if (!creFile.exists())
-			return credenciales;
-
-		try (BufferedReader br = new BufferedReader(new FileReader(creFile))) {
-			String line;
-			while ((line = br.readLine()) != null) {
-				String[] creds = line.split("\\|");
-				if (creds.length >= 4) {
-					Long id = Long.parseLong(creds[0]);
-				}
-			}
-
-		} catch (IOException e) {
-			System.out.println("Error al leer las credenciales.");
-		}
-		return credenciales;
 	}
 
 }
