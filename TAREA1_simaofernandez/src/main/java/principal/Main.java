@@ -1,3 +1,10 @@
+/**
+* Clase Main.java
+*
+* @author Simao Fernandez Gervasoni
+* @version 1.0
+*/
+
 package principal;
 
 import java.io.BufferedReader;
@@ -20,7 +27,6 @@ import java.util.regex.Pattern;
 
 import entidades.*;
 
-
 /*
  * Cosas que faltan:
  * usar paises.xml
@@ -32,10 +38,10 @@ import entidades.*;
  * Se asigna una persona de tipo Coordinador como responsable del
  *   nuevo Espectáculo. Si se tiene sesión como Administrador, se le
  *   mostrarán las personas
- * NO añadir vista completa de espectaculos
+ *   
  */
 
-public class main {
+public class Main {
 
 	static private Scanner read = new Scanner(System.in);
 	static private Sesion sesion = new Sesion("Invitado", Perfil.INVITADO);
@@ -45,7 +51,7 @@ public class main {
 	public static void main(String[] args) {
 
 		// Cargar los datos de espectaculos.dat a la lista
-		espectaculos = cargarEspectaculos();
+		espectaculos = loadEspectaculos();
 
 		System.out.println("Bienbenido/a.\nSeleccione la acción que desa hacer:");
 		boolean salir = false;
@@ -64,9 +70,11 @@ public class main {
 				break;
 
 			case COORDINACION:
+				menuCoordinacion();
 				break;
 
 			case ARTISTA:
+				menuArtista();
 				break;
 
 			default:
@@ -79,39 +87,36 @@ public class main {
 
 	}
 
-	private static TreeSet<Espectaculo> cargarEspectaculos() {
-		File espFile = new File("ficheros/espectaculos.dat");
 
-		if (!espFile.exists())
-			return espectaculos;
 
-		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(espFile))) {
-			espectaculos = (TreeSet<Espectaculo>) ois.readObject();
-		} catch (IOException | ClassNotFoundException e) {
-			System.out.println("Error al leer los espectáculos");
+//\\// Menus de perfiles
+	private static boolean menuInvitado() {
+
+		int menu;
+		System.out.println("2 - Iniciar Sesión\n1 - Ver Espectáculos\n0 - Salir");
+		menu = read.nextInt();
+		switch (menu) {
+		case 2:
+			inicioSesion();
+			break;
+
+		case 1:
+			System.out.println("Estos son los espectáculos programados:\n");
+			verEspectaculos();
+			break;
+
+		case 0:
+			System.out.println("¡Adiós!");
+			return true;
+
+		default:
+			System.out.println("Ha introducido un valor incorrecto. Por favor, vuelva a  intentarlo.");
+
 		}
-		return espectaculos;
-
+		return false;
 	}
-
-	private static void guardarEspectaculos() {
-
-		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("ficheros/espectaculos.dat"))) {
-			oos.writeObject(espectaculos);
-			System.out.println("El espectáculo se ha creado correctamente.");
-		} catch (IOException e) {
-			System.out.println("Error al crear el espectáculo.");
-		}
-
-	}
-
-	private static void verEspectaculos() {
-		espectaculos = cargarEspectaculos();
-		for (Espectaculo e : espectaculos) {
-			System.out.println(e.toString());
-		}
-	}
-
+	
+	// Iniciar Sesión
 	private static void inicioSesion() {
 		String name;
 		String password;
@@ -129,9 +134,59 @@ public class main {
 			System.out.println("Usuario o contraseña incorrectos. Vuelva a intentarlo.");
 
 	}
+	
+	// Menu Admin
+	private static void menuAdmin() {
 
+		int menu;
+		System.out.println("Seleccione la acción que desea realizar.");
+		System.out
+				.println("3 - Gestionar Personas\n2 - Gestionar Espectáculos\n1 - Ver Espectáculos\n0 - Cerrar Sesión");
+		menu = read.nextInt();
+		switch (menu) {
 
+		//# Gestionar persona
+		case 3:
 
+			gestionPersonas();
+			System.out.println();
+			break;
+
+		case 2:
+			System.out.println();
+			gestionEspectaculos();
+			System.out.println();
+			break;
+
+		case 1:
+			System.out.println("Estos son los espectáculos programados:\n");
+			verEspectaculos();
+			break;
+		case 0:
+			sesion.setPerfil(Perfil.INVITADO);
+			System.out.println("Su sesión ha sido cerrada");
+
+			return;
+
+		default:
+			System.out.println("Ha introducido un valor incorrecto. Por favor, vuelva a  intentarlo.");
+
+		}
+	}
+	
+	// Menu Coordinación
+	private static void menuCoordinacion() {
+
+	}
+
+	// Menu Artista
+	private static void menuArtista() {
+
+	}
+
+//\\// Espectáculos
+
+	// Menu de gestión de espectáculos
 	private static void gestionEspectaculos() {
 		int menu = 0;
 
@@ -142,13 +197,13 @@ public class main {
 			menu = read.nextInt();
 
 			switch (menu) {
-			case 3:
+			case 3: //# Crear y modificar espectáculos
 				cmEspectaculo();
 				break;
-			case 2: // Sin Implementar
+			case 2: //# Sin Implementar
 				System.out.println("La función aún no ha sido implementada.");
 				break;
-			case 1: // Sin Implementar
+			case 1: //# Sin Implementar
 				System.out.println("La función aún no ha sido implementada.");
 				break;
 			case 0:
@@ -163,6 +218,7 @@ public class main {
 
 	}
 
+	// Crear [y modificar] espectáculos
 	private static void cmEspectaculo() {
 		int menu = 0;
 		do {
@@ -170,13 +226,13 @@ public class main {
 			menu = read.nextInt();
 			read.nextLine();
 			switch (menu) {
-			// Crear espectáculo
+			//# Crear espectáculo
 			case 2:
 				System.out.println("Introduzca un nombre único para el espectáculo.");
-				String name = read.nextLine(); // No debe superar los 25 char.
+				String name = read.nextLine(); //# No debe superar los 25 char.
 				if (name.length() > 25) {
 					System.out.println("El nombre no debe superar los 25 caracteres.");
-					break; // Este break en principio funciona??
+					break; //# Este break en principio funciona??
 				}
 				LocalDate dateSt;
 				System.out.println("Introduzca la fecha inicial del espectáculo. (yyyy-mm-dd)");
@@ -206,9 +262,9 @@ public class main {
 					break;
 				}
 
-				espectaculos = cargarEspectaculos();
+				espectaculos = loadEspectaculos();
 
-				// Verificar si ya hay un espectáculo con el mismo nombre
+				//# Verificar si ya hay un espectáculo con el mismo nombre
 				boolean repetido = false;
 				for (Espectaculo e : espectaculos) {
 					if (e.getNombre().equalsIgnoreCase(name)) {
@@ -227,7 +283,7 @@ public class main {
 
 				Espectaculo esp = new Espectaculo(id, name, dateSt, dateEn);
 				espectaculos.add(esp);
-				guardarEspectaculos();
+				saveEspectaculos();
 
 				break;
 
@@ -236,6 +292,7 @@ public class main {
 				System.out.println("La función aún no ha sido implementada.");
 				break;
 
+			// Cancelar
 			case 0:
 				System.out.println("Operación cancelada.");
 				break;
@@ -247,6 +304,47 @@ public class main {
 		} while (menu != 0);
 	}
 
+	// Ficheros de Espectáculos
+
+	private static void saveEspectaculos() {
+
+		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("ficheros/espectaculos.dat"))) {
+			oos.writeObject(espectaculos);
+			System.out.println("El espectáculo se ha creado correctamente.");
+		} catch (IOException e) {
+			System.out.println("Error al crear el espectáculo.");
+		}
+
+	}
+
+	private static TreeSet<Espectaculo> loadEspectaculos() {
+		File espFile = new File("ficheros/espectaculos.dat");
+
+		if (!espFile.exists())
+			return espectaculos;
+
+		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(espFile))) {
+			espectaculos = (TreeSet<Espectaculo>) ois.readObject();
+		} catch (IOException | ClassNotFoundException e) {
+			System.out.println("Error al leer los espectáculos");
+		}
+		return espectaculos;
+
+	}
+
+  //\\ Otros métodos
+	
+	// Ver Espectáculos
+	private static void verEspectaculos() {
+		espectaculos = loadEspectaculos();
+		for (Espectaculo e : espectaculos) {
+			System.out.println(e.toString());
+		}
+	}
+
+//\\// Personas y Credenciales
+
+	// Menu de gestion de personas
 	private static void gestionPersonas() {
 		int menu = 0;
 		System.out.println("¿Cómo desea gestionar las Personas?");
@@ -313,7 +411,8 @@ public class main {
 						}
 					} while (esSenior != 'Y' && esSenior != 'N');
 
-					persona = new Coordinacion(personaID(), email, name, nacionalidad, perfilID(perfil), senior, seniorFecha);
+					persona = new Coordinacion(personaID(), email, name, nacionalidad, perfilID(perfil), senior,
+							seniorFecha);
 				} else {
 					char tieneApodo;
 					String apodo = null;
@@ -344,7 +443,7 @@ public class main {
 
 						String[] especialidades = read.nextLine().toUpperCase().split(",");
 						listaEspecialidades = new ArrayList<>();
-						listError=false;
+						listError = false;
 						for (String es : especialidades) {
 							try {
 								listaEspecialidades.add(Especialidad.valueOf(es.trim()));
@@ -409,7 +508,7 @@ public class main {
 				}
 
 				Credenciales credenciales = new Credenciales(personaID(), user, password, perfil);
-				saveCredenciales(persona,credenciales);
+				saveCredenciales(persona, credenciales);
 
 				break;
 			case 0:
@@ -423,17 +522,9 @@ public class main {
 		} while (menu != 0);
 	}
 
-	private static void saveCredenciales(Persona p, Credenciales c) {
-		try (BufferedWriter bw = new BufferedWriter(new FileWriter("ficheros/credenciales.txt", true))) {
-			bw.write(p.getidPersona() + "|" + c.getNombre() + "|" + c.getPassword() + "|" + p.getEmail() + "|"
-					+ p.getNombre() + "|" + p.getNacionalidad() + "|" + c.getPerfil());
-			bw.newLine();
-			System.out.println("La persona se ha registrado con éxito.");
-		} catch (IOException e) {
-			System.out.println("Error al guardar credenciales.");
-		}
-	}
+	// \\ IDs
 
+	// Obtiene el nuevo ID de Persona
 	private static Long personaID() {
 		Long idMax = 0L;
 		try (BufferedReader br = new BufferedReader(new FileReader("ficheros/credenciales.txt"))) {
@@ -449,7 +540,7 @@ public class main {
 		return idMax + 1;
 	}
 
-	// Obtiene el ID correspondiente de Artista o Coordinador
+	// Obtiene el nuevo ID correspondiente de Artista o Coordinador
 	private static Long perfilID(Perfil perfil) {
 		Long idMax = 0L;
 		Long id = 0L;
@@ -468,7 +559,22 @@ public class main {
 
 	}
 
-	private static TreeSet<Credenciales> cargarCredenciales() {
+	// \\ Ficheros de Personas y Credenciales
+
+	// Guardar las credenciales en "credenciales.txt"
+	private static void saveCredenciales(Persona p, Credenciales c) {
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter("ficheros/credenciales.txt", true))) {
+			bw.write(p.getidPersona() + "|" + c.getNombre() + "|" + c.getPassword() + "|" + p.getEmail() + "|"
+					+ p.getNombre() + "|" + p.getNacionalidad() + "|" + c.getPerfil());
+			bw.newLine();
+			System.out.println("La persona se ha registrado con éxito.");
+		} catch (IOException e) {
+			System.out.println("Error al guardar credenciales.");
+		}
+	}
+
+	// Cargar las credenciales desde "credenciales.txt"
+	private static TreeSet<Credenciales> loadCredenciales() {
 		File creFile = new File("ficheros/credenciales.txt");
 
 		if (!creFile.exists())
@@ -487,80 +593,9 @@ public class main {
 			System.out.println("Error al leer las credenciales.");
 		}
 		return credenciales;
-		
-		
-	}
-	
-//\\// Menus
-	private static boolean menuInvitado() {
 
-		int menu;
-		System.out.println("2 - Iniciar Sesión\n1 - Ver Espectáculos\n0 - Salir");
-		menu = read.nextInt();
-		switch (menu) {
-		case 2:
-			System.out.println("Ini");
-			inicioSesion();
-			break;
-
-		case 1:
-			System.out.println("Estos son los espectáculos programados:\n");
-			verEspectaculos();
-			break;
-
-		case 0:
-			System.out.println("¡Adiós!");
-			return true;
-
-		default:
-			System.out.println("Ha introducido un valor incorrecto. Por favor, vuelva a  intentarlo.");
-
-		}
-		return false;
 	}
 
-	private static void menuAdmin() {
-
-		int menu;
-		System.out.println("Seleccione la acción que desea realizar.");
-		System.out.println(
-				"4 - Gestionar Personas\n3 - Gestionar Espectáculos\n2 - Ver Espectáculos\n1 - Ver Espectáculo completo\n0 - Cerrar Sesión");
-		menu = read.nextInt();
-		switch (menu) {
-
-		// Gestionar persona
-		case 4:
-
-			gestionPersonas();
-			System.out.println();
-			break;
-
-		case 3:
-			System.out.println();
-			gestionEspectaculos();
-			System.out.println();
-			break;
-
-		case 0:
-			sesion.setPerfil(Perfil.INVITADO);
-			System.out.println("Su sesión ha sido cerrada");
-
-			return;
-
-		default:
-			System.out.println("Ha introducido un valor incorrecto. Por favor, vuelva a  intentarlo.");
-
-		}
-	}
-	
-	private static void menuCoordinacion() {
-		
-	}
-	
-	private static void menuArtista() {
-		
-	}
-	
 //\\// Validaciones
 	private static boolean existeUsuario(String user) {
 
