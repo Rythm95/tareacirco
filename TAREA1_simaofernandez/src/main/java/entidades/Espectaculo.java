@@ -12,14 +12,16 @@ public class Espectaculo implements Serializable, Comparable<Espectaculo>{
 	private String nombre;
 	private LocalDate fechaini;
 	private LocalDate fechacfin;
+	private Long idCoordinacion;
 	// NO HACE FALTA MODIFICAR ESPECTACULO (aún)
 
-	public Espectaculo(Long id, String nombre, LocalDate fechaini, LocalDate fechacfin) {
+	public Espectaculo(Long id, String nombre, LocalDate fechaini, LocalDate fechacfin, Long idCoordinacion) {
 		super();
 		this.id = id;
 		this.nombre = nombre;
 		this.fechaini = fechaini;
 		this.fechacfin = fechacfin;
+		this.idCoordinacion = idCoordinacion;
 	}
 
 	public Long getId() {
@@ -52,6 +54,14 @@ public class Espectaculo implements Serializable, Comparable<Espectaculo>{
 
 	public void setFechacfin(LocalDate fechacfin) {
 		this.fechacfin = fechacfin;
+	}
+	
+	public Long getIdCoordinacion() {
+		return idCoordinacion;
+	}
+
+	public void setIdCoordinacion(Long idCoordinacion) {
+		this.idCoordinacion = idCoordinacion;
 	}
 
 	@Override
